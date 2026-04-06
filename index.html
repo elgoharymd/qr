@@ -1,19 +1,15 @@
-<!DOCTYPE html>
+     <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مختصر الروابط | تحميل QR</title>
+    <title>مختصر الروابط الذكي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', sans-serif;
-        }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; font-family: 'Segoe UI', sans-serif; }
         .glass-card { background: rgba(255, 255, 255, 0.98); }
-        #qrcode img { margin: 0 auto; border: 8px solid white; border-radius: 12px; shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        #qrcode img { margin: 0 auto; border: 8px solid white; border-radius: 12px; }
     </style>
 </head>
 <body class="flex items-center justify-center p-6">
@@ -21,40 +17,43 @@
     <div id="app" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
         
         <div id="main-content">
-            <div class="text-5xl mb-4">✨</div>
-            <h1 class="text-2xl font-black text-slate-800 mb-2">مختصر الروابط الاحترافي</h1>
-            <p class="text-slate-500 text-sm mb-8">اختصر، شارك، ونزّل كود الـ QR</p>
+            <div class="text-5xl mb-4">🔗</div>
+            <h1 class="text-2xl font-black text-slate-800 mb-6">مختصر الروابط السريع</h1>
 
             <div class="space-y-4">
                 <input type="url" id="longUrl" placeholder="أدخل الرابط الطويل هنا..." 
                        class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all shadow-sm">
                 
+                <input type="text" id="customSlug" placeholder="اسم مخصص للرابط (اختياري)" 
+                       class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all shadow-sm">
+
                 <button id="shortenBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-all text-lg">
-                    توليد الرابط والـ QR
+                    إنشاء وتحميل تلقائي
                 </button>
             </div>
 
             <div id="resultArea" class="hidden mt-8 space-y-6">
-                <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-left">
+                <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl">
+                    <p class="text-xs text-blue-800 mb-2 font-bold text-right">تم الحفظ بنجاح!</p>
                     <div class="bg-white p-3 rounded-xl border border-blue-200 shadow-inner flex items-center justify-between gap-2">
-                        <a id="shortLink" href="#" target="_blank" class="text-blue-600 font-bold break-all text-sm underline flex-1"></a>
-                        <button onclick="copyToClipboard()" class="text-xs bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700">نسخ</button>
+                        <a id="shortLink" href="#" target="_blank" class="text-blue-600 font-bold break-all text-sm underline flex-1 text-left"></a>
+                        <button onclick="copyToClipboard()" class="text-xs bg-blue-600 text-white px-3 py-2 rounded-lg">نسخ</button>
                     </div>
                 </div>
 
                 <div class="space-y-4">
                     <div id="qrcode" class="flex justify-center p-2"></div>
-                    
-                    <button id="downloadBtn" class="flex items-center justify-center gap-2 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-md transition-all">
-                        <span>📥</span> تنزيل كود الـ QR
+                    <p class="text-xs text-slate-400">تم تحميل صورة الـ QR تلقائياً في جهازك</p>
+                    <button id="downloadBtn" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-sm transition-all">
+                        إعادة تحميل الصورة 📥
                     </button>
                 </div>
             </div>
         </div>
 
-        <div id="redirect-screen" class="hidden py-12">
+        <div id="redirect-screen" class="hidden py-12 text-center">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 mx-auto"></div>
-            <p class="mt-6 text-slate-800 font-bold text-lg italic">جاري التحويل...</p>
+            <p class="mt-6 text-slate-800 font-bold text-lg">جاري التحويل...</p>
         </div>
     </div>
 
@@ -62,7 +61,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // إعدادات Firebase الخاصة بك
         const firebaseConfig = {
             apiKey: "AIzaSyDGhCAU7DLleD1KkCR6SQmvl8bpDncHJ8g",
             authDomain: "planning-with-ai-797ec.firebaseapp.com",
@@ -82,11 +80,17 @@
 
         shortenBtn.addEventListener('click', async () => {
             const originalUrl = document.getElementById('longUrl').value.trim();
-            if (!originalUrl) return alert("ضع الرابط أولاً!");
+            let slug = document.getElementById('customSlug').value.trim();
 
-            const slug = Math.random().toString(36).substring(2, 8);
+            if (!originalUrl) return alert("يرجى إدخال الرابط أولاً!");
+            if (!slug) slug = Math.random().toString(36).substring(2, 8);
 
             try {
+                const checkExist = await get(child(ref(db), `links/${slug}`));
+                if (checkExist.exists() && document.getElementById('customSlug').value.trim() !== "") {
+                    return alert("هذا الاسم مستخدم، اختر اسماً آخر.");
+                }
+
                 await set(ref(db, 'links/' + slug), { target: originalUrl });
                 const finalLink = window.location.origin + window.location.pathname + "?" + slug;
                 
@@ -95,32 +99,36 @@
 
                 // توليد QR
                 qrcodeContainer.innerHTML = "";
-                const qr = new QRCode(qrcodeContainer, {
-                    text: finalLink,
-                    width: 200,
-                    height: 200,
-                    colorDark : "#0f172a",
-                    colorLight : "#ffffff",
+                new QRCode(qrcodeContainer, {
+                    text: finalLink, width: 200, height: 200,
+                    colorDark : "#0f172a", colorLight : "#ffffff",
                     correctLevel : QRCode.CorrectLevel.H
                 });
 
                 document.getElementById('resultArea').classList.remove('hidden');
 
-                // وظيفة التنزيل (يجب الانتظار قليلاً حتى يتم رسم الصورة)
+                // تنفيذ التحميل التلقائي فوراً
                 setTimeout(() => {
-                    const qrImage = qrcodeContainer.querySelector('img').src;
-                    downloadBtn.onclick = () => {
+                    const img = qrcodeContainer.querySelector('img');
+                    if (img) {
                         const link = document.createElement('a');
-                        link.href = qrImage;
-                        link.download = `QR-${slug}.png`;
+                        link.href = img.src;
+                        link.download = `${slug}-QR.png`;
                         link.click();
-                    };
-                }, 500);
+                        
+                        // ربط زر إعادة التحميل بنفس الصورة
+                        downloadBtn.onclick = () => {
+                            const reLink = document.createElement('a');
+                            reLink.href = img.src;
+                            reLink.download = `${slug}-QR.png`;
+                            reLink.click();
+                        };
+                    }
+                }, 600);
 
-            } catch (e) { alert("خطأ في Firebase!"); }
+            } catch (e) { alert("خطأ في الاتصال!"); }
         });
 
-        // نظام التوجيه
         window.onload = async () => {
             const slug = window.location.search.substring(1);
             if (slug) {
@@ -139,7 +147,7 @@
     <script>
         function copyToClipboard() {
             const linkText = document.getElementById('shortLink').innerText;
-            navigator.clipboard.writeText(linkText).then(() => alert("تم نسخ الرابط!"));
+            navigator.clipboard.writeText(linkText).then(() => alert("تم النسخ!"));
         }
     </script>
 </body>
