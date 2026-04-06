@@ -14,67 +14,71 @@
         }
         .glass-card { background: rgba(255, 255, 255, 0.98); }
         #qrcode { display: inline-block; padding: 10px; background: white; border-radius: 12px; }
-        canvas { display: block; margin: 0 auto; }
+        canvas { display: block; margin: 0 auto; border-radius: 8px; }
         .hexagon-img {
-            width: 200px;
-            height: 200px;
-            margin: 20px auto;
+            width: 150px;
+            height: 150px;
+            margin: 10px auto 20px auto;
             display: block;
             clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
             object-fit: cover;
-            filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.1));
+            filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.1));
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
         }
         .hexagon-img:hover {
-            transform: scale(1.08) rotate(3deg);
-            filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.2));
+            transform: scale(1.05) rotate(2deg);
+            filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.15));
         }
     </style>
 </head>
-<body class="flex items-center justify-center p-6">
+<body class="flex items-center justify-center p-4 md:p-6">
 
-    <div id="app" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
+    <div id="app" class="glass-card p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
         
         <div id="main-content">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiH5Tji4WfG5r2d_T0XAd2LBBNB28t2dhFqJAcbR5JSpyMqqNB6IbugiC2Vos-2smWIa3tMpA7kEHf3iMcHSsbmkZUw9I1AwP-ocTRnlzLDJWjCb8eH5m2cRXiWpIa-O6a1bOSdyB9hUg-FepVa9QPjTs8Co6nX0_GDnednjERDFmN1quZbkIbW5wQjh2I/s1024/103777.png" class="hexagon-img" alt="Logo">
-            <h1 class="text-2xl font-black text-slate-800 mb-6">اختصار روابط/elgoharyX</h1>
+            <img id="mainLogo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiH5Tji4WfG5r2d_T0XAd2LBBNB28t2dhFqJAcbR5JSpyMqqNB6IbugiC2Vos-2smWIa3tMpA7kEHf3iMcHSsbmkZUw9I1AwP-ocTRnlzLDJWjCb8eH5m2cRXiWpIa-O6a1bOSdyB9hUg-FepVa9QPjTs8Co6nX0_GDnednjERDFmN1quZbkIbW5wQjh2I/s1024/103777.png" class="hexagon-img" alt="elgoharyx Logo">
+            <h1 class="text-xl md:text-2xl font-black text-slate-800 mb-6">اختصار روابط / elgoharyX</h1>
 
             <div class="space-y-4">
-                <input type="url" id="longUrl" placeholder="أدخل الرابط الطويل..." 
-                       class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all">
+                <input type="url" id="longUrl" placeholder="أدخل الرابط الطويل (مثال: https://google.com)" 
+                       class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all placeholder:text-slate-400">
                 
-                <input type="text" id="customSlug" placeholder="كلمة مميزة للرابط (مثال: promo)" 
-                       class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all">
+                <input type="text" id="customSlug" placeholder="كلمة مميزة للرابط (اختياري، مثال: myprofile)" 
+                       class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all placeholder:text-slate-400">
 
-                <input type="text" id="logoUrl" placeholder="رابط صورة اللوجو للكود (اختياري)" 
-                       class="w-full p-3 bg-slate-100 border-2 border-transparent rounded-xl text-left dir-ltr outline-none focus:border-blue-500 text-sm">
-
-                <button id="shortenBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-all text-lg">
-                    إنشاء وحميل QR تلقائياً
+                <button id="shortenBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-all text-lg flex items-center justify-center gap-2">
+                    <span id="btnText">إنشاء الرابط و QR مع الشعار</span>
+                    <div id="btnLoader" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                 </button>
             </div>
 
-            <div id="resultArea" class="hidden mt-8 space-y-6">
+            <div id="resultArea" class="hidden mt-8 space-y-6 border-t border-slate-100 pt-6">
                 <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl">
+                    <label class="block text-slate-500 text-xs mb-2 text-right">الرابط المختصر الفريد:</label>
                     <div class="bg-white p-3 rounded-xl border border-blue-200 shadow-inner flex items-center justify-between gap-2">
-                        <a id="shortLink" href="#" target="_blank" class="text-blue-600 font-bold break-all text-sm underline flex-1 text-left"></a>
-                        <button onclick="copyToClipboard()" class="text-xs bg-blue-600 text-white px-3 py-2 rounded-lg">نسخ</button>
+                        <a id="shortLink" href="#" target="_blank" class="text-blue-600 font-bold break-all text-sm underline flex-1 text-left dir-ltr"></a>
+                        <button onclick="copyToClipboard()" class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-2 rounded-lg font-medium transition-colors">نسخ</button>
                     </div>
                 </div>
 
                 <div class="space-y-4">
+                    <label class="block text-slate-700 font-bold text-sm text-right">كود QR مدمج مع شعار elgoharyx:</label>
                     <div id="qrcode"></div>
-                    <button id="downloadBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-md transition-all">
-                        تحميل الصورة يدوياً
+                    <button id="downloadBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        تحميل صورة QR يدوياً
                     </button>
                 </div>
             </div>
         </div>
 
-        <div id="redirect-screen" class="hidden py-12 text-center">
+        <div id="redirect-screen" class="hidden py-16 text-center">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 mx-auto"></div>
-            <p class="mt-6 text-slate-800 font-bold text-lg">جاري توجيهك...</p>
+            <p class="mt-8 text-slate-800 font-bold text-xl">جاري تحويلك بأمان...</p>
+            <p class="text-slate-500 mt-2 text-sm">بواسطة elgoharyx</p>
         </div>
     </div>
 
@@ -97,94 +101,136 @@
         const db = getDatabase(app);
 
         const shortenBtn = document.getElementById('shortenBtn');
+        const btnText = document.getElementById('btnText');
+        const btnLoader = document.getElementById('btnLoader');
         const qrcodeContainer = document.getElementById("qrcode");
+        const logoSrc = document.getElementById('mainLogo').src; // رابط الشعار الأصلي
 
         shortenBtn.addEventListener('click', async () => {
             const originalUrl = document.getElementById('longUrl').value.trim();
-            const logoUrl = document.getElementById('logoUrl').value.trim();
             let slugInput = document.getElementById('customSlug').value.trim();
 
-            if (!originalUrl) return alert("من فضلك أدخل الرابط!");
+            if (!originalUrl) return alert("من فضلك أدخل الرابط المراد اختصاره!");
 
-            // التعديل الجوهري: إنشاء ID فريد جداً يجمع بين الوقت الحالي واسم المستخدم
-            // Date.now() يضمن أن كل ثانية لها ID مختلف تماماً
+            // تفعيل حالة التحميل في الزر
+            shortenBtn.disabled = true;
+            btnText.innerText = "جاري المعالجة...";
+            btnLoader.classList.remove('hidden');
+
+            // إنشاء ID فريد (يجمع الوقت الحالي + اسم المستخدم إن وجد) لمنع التكرار
             const uniqueID = Date.now().toString(36); 
             const finalSlug = slugInput ? `${slugInput}_${uniqueID}` : uniqueID;
 
             try {
-                // حفظ الرابط في قاعدة البيانات تحت المعرف الفريد الجديد
+                // حفظ الرابط في قاعدة البيانات
                 await set(ref(db, 'links/' + finalSlug), { 
                     target: originalUrl,
                     createdAt: new Date().toISOString() 
                 });
 
+                // إنشاء الرابط المختصر النهائي
                 const finalLink = window.location.origin + window.location.pathname + "?" + finalSlug;
                 
+                // تحديث واجهة المستخدم
                 document.getElementById('shortLink').innerText = finalLink;
                 document.getElementById('shortLink').href = finalLink;
                 document.getElementById('resultArea').classList.remove('hidden');
 
-                // إنشاء QR Code
+                // مسح أي كود QR سابق
                 qrcodeContainer.innerHTML = "";
+                
+                // 1. إنشاء QR Code الأساسي (على Canvas)
                 const qr = new QRCode(qrcodeContainer, {
                     text: finalLink,
                     width: 280,
                     height: 280,
                     colorDark : "#000000",
                     colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
+                    // استخدام مستوى تصحيح خطأ مرتفع (H) للسماح بتغطية الوسط بالشعار
+                    correctLevel : QRCode.CorrectLevel.H 
                 });
 
-                // تفعيل التحميل التلقائي بعد رسم الكود واللوجو
+                // 2. الانتظار قليلاً للتأكد من أن Canvas قد تم رسمه بواسطة المكتبة
                 setTimeout(() => {
                     const canvas = qrcodeContainer.querySelector('canvas');
                     if (canvas) {
-                        if (logoUrl) {
-                            const ctx = canvas.getContext('2d');
-                            const img = new Image();
-                            img.crossOrigin = "anonymous";
-                            img.src = logoUrl;
-                            img.onload = () => {
-                                const size = canvas.width * 0.22;
-                                const x = (canvas.width - size) / 2;
-                                const y = (canvas.height - size) / 2;
-                                ctx.fillStyle = "white";
-                                ctx.fillRect(x - 5, y - 5, size + 10, size + 10);
-                                ctx.drawImage(img, x, y, size, size);
-                                autoDownload(canvas, finalSlug);
-                            };
-                            img.onerror = () => autoDownload(canvas, finalSlug);
-                        } else {
-                            autoDownload(canvas, finalSlug);
-                        }
+                        // 3. جلب ورسم الشعار في المنتصف اونلاين
+                        drawLogoInCenter(canvas, logoSrc, finalSlug);
                     }
-                }, 700);
+                }, 500);
 
             } catch (e) { 
                 console.error(e);
-                alert("حدث خطأ أثناء الاتصال بقاعدة البيانات!"); 
+                alert("حدث خطأ غير متوقع أثناء الاتصال بقاعدة البيانات. حاول مرة أخرى."); 
+            } finally {
+                // إعادة الزر لحالته الأصلية
+                shortenBtn.disabled = false;
+                btnText.innerText = "إنشاء الرابط و QR مع الشعار";
+                btnLoader.classList.add('hidden');
             }
         });
 
-        function autoDownload(canvas, filename) {
+        // دالة لجلب الصورة من الرابط ورسمها في منتصف الـ Canvas
+        function drawLogoInCenter(canvas, imgSrc, filename) {
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            // السماح بجلب الصورة من رابط خارجي (CORS)
+            img.crossOrigin = "anonymous"; 
+            img.src = imgSrc;
+
+            img.onload = () => {
+                // تحديد حجم الشعار (مثلاً 22% من حجم الكود)
+                const logoSize = canvas.width * 0.22;
+                // حساب إحداثيات المنتصف
+                const x = (canvas.width - logoSize) / 2;
+                const y = (canvas.height - logoSize) / 2;
+
+                // رسم خلفية بيضاء صغيرة خلف الشعار لتحسين القراءة (Padding)
+                const padding = 6;
+                ctx.fillStyle = "#ffffff";
+                // رسم مستطيل أبيض في المنتصف
+                ctx.fillRect(x - padding, y - padding, logoSize + (padding * 2), logoSize + (padding * 2));
+
+                // رسم الشعار السداسي في المنتصف
+                ctx.drawImage(img, x, y, logoSize, logoSize);
+
+                // بعد اكتمال الرسم، تفعيل التحميل التلقائي وتحديث زر التحميل
+                finalizeAndAutoDownload(canvas, filename);
+            };
+
+            // في حال فشل تحميل الصورة من الرابط، حمل الـ QR الأساسي فقط
+            img.onerror = () => {
+                console.warn("فشل تحميل الشعار اونلاين، سيتم إنشاء QR بدون شعار.");
+                finalizeAndAutoDownload(canvas, filename);
+            };
+        }
+
+        // دالة لإنهاء المعالجة، تحديث زر التحميل، والتحميل التلقائي
+        function finalizeAndAutoDownload(canvas, filename) {
             const dataUrl = canvas.toDataURL("image/png");
-            const link = document.createElement('a');
-            link.href = dataUrl;
-            link.download = `QR_${filename}.png`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const finalFilename = `elgoharyx_QR_${filename}.png`;
 
             // تحديث زر التحميل اليدوي في الصفحة
             document.getElementById('downloadBtn').onclick = () => {
                 const a = document.createElement('a');
                 a.href = dataUrl;
-                a.download = `QR_${filename}.png`;
+                a.download = finalFilename;
+                document.body.appendChild(a);
                 a.click();
+                document.body.removeChild(a);
             };
+
+            // تنفيذ التحميل التلقائي فوراً للمستخدم
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = finalFilename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
-        // منطق إعادة التوجيه (Redirect)
+        // منطق إعادة التوجيه (Redirect) - يبقى كما هو
         window.onload = async () => {
             const urlParams = window.location.search.substring(1);
             if (urlParams) {
@@ -196,10 +242,11 @@
                     if (snapshot.exists()) {
                         window.location.replace(snapshot.val().target);
                     } else {
-                        alert("هذا الرابط غير موجود أو تم حذفه.");
+                        alert("عذراً، هذا الرابط المختصر غير صحيح أو انتهت صلاحيته.");
                         window.location.href = window.location.origin + window.location.pathname;
                     }
                 } catch (e) {
+                    console.error(e);
                     window.location.href = window.location.origin + window.location.pathname;
                 }
             }
@@ -207,10 +254,14 @@
     </script>
 
     <script>
+        // دالة نسخ الرابط للقبس
         function copyToClipboard() {
             const linkText = document.getElementById('shortLink').innerText;
+            if (!linkText) return;
             navigator.clipboard.writeText(linkText).then(() => {
-                alert("تم نسخ الرابط بنجاح!");
+                alert("تم نسخ الرابط المختصر إلى الحافظة!");
+            }).catch(err => {
+                alert("فشل النسخ تلقائياً، يرجى نسخه يدوياً.");
             });
         }
     </script>
