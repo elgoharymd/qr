@@ -13,6 +13,32 @@ background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
 }        .glass-card { background: rgba(255, 255, 255, 0.98); }
         #qrcode { display: inline-block; padding: 10px; background: white; border-radius: 12px; }
         canvas { display: block; margin: 0 auto; }
+        .hexagon-img {
+    /* 1. الأبعاد الأساسية (يجب أن تكون متساوية) */
+    width: 200px;
+    height: 200px;
+    margin: 20px auto;
+    display: block;
+
+    /* 2. أمر القص السداسي */
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+
+    /* 3. ضبط الصورة ومنع التشويه */
+    object-fit: cover;
+
+    /* 4. الظل والجمالية (بما أن الخلفية بيضاء) */
+    filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.1));
+    
+    /* 5. تنعيم الحركة (الأنيميشن) */
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+/* 6. تأثير عند مرور الماوس (Hover) */
+.hexagon-img:hover {
+    transform: scale(1.08) rotate(3deg); /* تكبير وميلان بسيط */
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.2)); /* زيادة عمق الظل */
+}
     </style>
 </head>
 <body class="flex items-center justify-center p-6">
@@ -20,8 +46,7 @@ background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
     <div id="app" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
         
         <div id="main-content">
-            <div class="text-5xl mb-4">🔗</div>
-            <h1 class="text-2xl font-black text-slate-800 mb-6">المختصر الكلاسيكي</h1>
+<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiH5Tji4WfG5r2d_T0XAd2LBBNB28t2dhFqJAcbR5JSpyMqqNB6IbugiC2Vos-2smWIa3tMpA7kEHf3iMcHSsbmkZUw9I1AwP-ocTRnlzLDJWjCb8eH5m2cRXiWpIa-O6a1bOSdyB9hUg-FepVa9QPjTs8Co6nX0_GDnednjERDFmN1quZbkIbW5wQjh2I/s1024/103777.png" class="hexagon-img" alt="Hexagon Profile">            <h1 class="text-2xl font-black text-slate-800 mb-6">المختصر الكلاسيكي</h1>
 
             <div class="space-y-4">
                 <input type="url" id="longUrl" placeholder="أدخل الرابط الطويل..." 
