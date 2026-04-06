@@ -3,38 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مختصر الروابط الاحترافي | اللوجو المخصص</title>
+    <title>مختصر الروابط المحترف</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
     <style>
         body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; font-family: 'Segoe UI', sans-serif; }
         .glass-card { background: rgba(255, 255, 255, 0.98); }
-        #qrcode-canvas { margin: 0 auto; display: block; border-radius: 16px; }
+        #qrcode-canvas { margin: 0 auto; min-height: 260px; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body class="flex items-center justify-center p-6">
 
-    <div id="app" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
+    <div id="app" class="glass-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center border border-white/20">
         
         <div id="main-content">
-            <div class="text-5xl mb-4">🎨</div>
-            <h1 class="text-2xl font-black text-slate-800 mb-6">مختصر الروابط والـ QR</h1>
+            <div class="text-5xl mb-4">🔗</div>
+            <h1 class="text-2xl font-black text-slate-800 mb-6">مختصر الروابط و QR</h1>
 
             <div class="space-y-4">
-                <input type="url" id="longUrl" placeholder="أدخل الرابط الطويل هنا..." 
-                       class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all shadow-sm">
+                <input type="url" id="longUrl" placeholder="أدخل الرابط الطويل..." 
+                       class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all">
                 
-                <input type="text" id="customSlug" placeholder="اسم مخصص للرابط (اختياري)" 
-                       class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all shadow-sm">
+                <input type="text" id="customSlug" placeholder="اسم الرابط (اختياري)" 
+                       class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all">
 
-                <div class="pt-2">
-                    <label class="block text-right text-xs text-slate-400 mb-1 mr-2">رابط اللوجو (PNG أو JPG)</label>
-                    <input type="text" id="logoUrl" placeholder="https://example.com/logo.png" 
-                           class="w-full p-3 bg-slate-100 border-2 border-transparent rounded-xl text-left dir-ltr outline-none focus:border-emerald-400 transition-all text-sm">
-                </div>
+                <input type="text" id="logoUrl" placeholder="رابط صورة اللوجو (اختياري)" 
+                       class="w-full p-3 bg-slate-100 border-2 border-transparent rounded-xl text-left dir-ltr outline-none focus:border-blue-500 text-sm">
 
                 <button id="shortenBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-all text-lg">
-                    إنشاء وتحميل QR 🚀
+                    توليد الرابط والـ QR 🚀
                 </button>
             </div>
 
@@ -47,7 +44,7 @@
                 </div>
 
                 <div class="space-y-4">
-                    <div id="qrcode-canvas" class="flex justify-center p-2"></div>
+                    <div id="qrcode-canvas"></div>
                     <button id="downloadBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-md transition-all">
                         تنزيل الصورة 📥
                     </button>
@@ -57,7 +54,7 @@
 
         <div id="redirect-screen" class="hidden py-12 text-center">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 mx-auto"></div>
-            <p class="mt-6 text-slate-800 font-bold text-lg">جاري التحويل...</p>
+            <p class="mt-6 text-slate-800 font-bold text-lg italic">جاري التحويل...</p>
         </div>
     </div>
 
@@ -80,43 +77,55 @@
 
         const shortenBtn = document.getElementById('shortenBtn');
         const qrcodeContainer = document.getElementById("qrcode-canvas");
-        const downloadBtn = document.getElementById("downloadBtn");
 
         shortenBtn.addEventListener('click', async () => {
             const originalUrl = document.getElementById('longUrl').value.trim();
-            const logoUrlInput = document.getElementById('logoUrl').value.trim();
+            const logoUrl = document.getElementById('logoUrl').value.trim();
             let slug = document.getElementById('customSlug').value.trim();
 
-            if (!originalUrl) return alert("يرجى إدخال الرابط أولاً!");
+            if (!originalUrl) return alert("ضع الرابط أولاً!");
             if (!slug) slug = Math.random().toString(36).substring(2, 8);
 
             try {
                 await set(ref(db, 'links/' + slug), { target: originalUrl });
                 const finalLink = window.location.origin + window.location.pathname + "?" + slug;
+                
                 document.getElementById('shortLink').innerText = finalLink;
                 document.getElementById('shortLink').href = finalLink;
-
-                qrcodeContainer.innerHTML = "";
-
-                const qrCodeStyling = new QRCodeStyling({
-                    width: 260, height: 260, type: "svg", data: finalLink,
-                    image: logoUrlInput || "", // استخدام الرابط من الحقل أو تركه فارغاً
-                    dotsOptions: { color: "#0f172a", type: "rounded" },
-                    backgroundOptions: { color: "#ffffff" },
-                    imageOptions: { crossOrigin: "anonymous", margin: 8, imageSize: 0.3 }
-                });
-
-                qrCodeStyling.append(qrcodeContainer);
                 document.getElementById('resultArea').classList.remove('hidden');
 
-                setTimeout(() => {
-                    qrCodeStyling.download({ name: `${slug}-QR`, extension: "png" });
-                    downloadBtn.onclick = () => qrCodeStyling.download({ name: `${slug}-QR`, extension: "png" });
-                }, 800);
+                // مسح أي كود سابق
+                qrcodeContainer.innerHTML = "";
 
-            } catch (e) { alert("خطأ في الاتصال!"); }
+                // إعداد الـ QR بشكل صحيح ومستقر
+                const qrCode = new QRCodeStyling({
+                    width: 260,
+                    height: 260,
+                    data: finalLink,
+                    image: logoUrl,
+                    dotsOptions: { color: "#0f172a", type: "rounded" },
+                    backgroundOptions: { color: "#ffffff" },
+                    imageOptions: { 
+                        crossOrigin: "anonymous", 
+                        margin: 10, 
+                        imageSize: 0.4 // حجم اللوجو 40%
+                    }
+                });
+
+                qrCode.append(qrcodeContainer);
+
+                // التنزيل التلقائي
+                setTimeout(() => {
+                    qrCode.download({ name: slug, extension: "png" });
+                    document.getElementById('downloadBtn').onclick = () => qrCode.download({ name: slug, extension: "png" });
+                }, 1000);
+
+            } catch (e) {
+                alert("حدث خطأ! تأكد من إعدادات قاعدة البيانات.");
+            }
         });
 
+        // نظام التوجيه
         window.onload = async () => {
             const slug = window.location.search.substring(1);
             if (slug) {
@@ -135,7 +144,7 @@
     <script>
         function copyToClipboard() {
             const linkText = document.getElementById('shortLink').innerText;
-            navigator.clipboard.writeText(linkText).then(() => alert("تم نسخ الرابط!"));
+            navigator.clipboard.writeText(linkText).then(() => alert("تم النسخ!"));
         }
     </script>
 </body>
