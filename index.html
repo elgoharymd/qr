@@ -9,8 +9,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         body { background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); min-height: 100vh; font-family: 'Segoe UI', sans-serif; }
-        .glass-card { background: rgba(255, 255, 255, 0.98); }
-        #qrcode { display: inline-block; padding: 10px; background: white; border-radius: 12px; }
+        .glass-card { background: rgba(255, 255, 255, 0.98); border: 1px solid rgba(255,255,255,0.2); }
+        #qrcode img { display: inline-block; margin: 0 auto; border-radius: 12px; }
         .hexagon-img {
             width: 150px; height: 150px; margin: 10px auto 20px auto; display: block;
             clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
@@ -19,49 +19,41 @@
         .dir-ltr { direction: ltr; text-align: left; }
     </style>
 </head>
-<body class="flex items-center justify-center p-4 md:p-6">
+<body class="flex items-center justify-center p-4">
 
     <div id="app" class="glass-card p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
         <div id="main-content">
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiH5Tji4WfG5r2d_T0XAd2LBBNB28t2dhFqJAcbR5JSpyMqqNB6IbugiC2Vos-2smWIa3tMpA7kEHf3iMcHSsbmkZUw9I1AwP-ocTRnlzLDJWjCb8eH5m2cRXiWpIa-O6a1bOSdyB9hUg-FepVa9QPjTs8Co6nX0_GDnednjERDFmN1quZbkIbW5wQjh2I/s1024/103777.png" class="hexagon-img" alt="elgoharyx Logo">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiH5Tji4WfG5r2d_T0XAd2LBBNB28t2dhFqJAcbR5JSpyMqqNB6IbugiC2Vos-2smWIa3tMpA7kEHf3iMcHSsbmkZUw9I1AwP-ocTRnlzLDJWjCb8eH5m2cRXiWpIa-O6a1bOSdyB9hUg-FepVa9QPjTs8Co6nX0_GDnednjERDFmN1quZbkIbW5wQjh2I/s1024/103777.png" class="hexagon-img" alt="Logo">
             <h1 class="text-xl md:text-2xl font-black text-slate-800 mb-6">اختصار روابط / elgoharyX</h1>
 
             <div class="space-y-4">
-                <input type="url" id="longUrl" placeholder="أدخل الرابط الطويل (https://...)" 
+                <input type="url" id="longUrl" placeholder="أدخل الرابط الطويل هنا" 
                        class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all">
                 
-                <input type="text" id="customSlug" placeholder="الاسم المخصص (اختياري)" 
+                <input type="text" id="customSlug" placeholder="اسم مخصص (اختياري)" 
                        class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-right outline-none focus:border-blue-500 transition-all">
 
-                <button id="shortenBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
-                    <span id="btnText">إنشاء الرابط و QR كود</span>
+                <button id="shortenBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95">
+                    <span id="btnText">إنشاء الرابط و QR</span>
                     <div id="btnLoader" class="hidden animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                 </button>
             </div>
 
-            <div id="resultArea" class="hidden mt-8 space-y-6 border-t border-slate-100 pt-6">
-                <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-right">
-                    <label class="block text-slate-500 text-xs mb-2">الرابط المختصر الفريد:</label>
-                    <div class="bg-white p-3 rounded-xl border border-blue-200 shadow-inner flex items-center justify-between gap-2">
-                        <a id="shortLink" href="#" target="_blank" class="text-blue-600 font-bold break-all text-sm underline dir-ltr flex-1"></a>
-                        <button onclick="copyToClipboard()" class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-2 rounded-lg font-medium">نسخ</button>
+            <div id="resultArea" class="hidden mt-8 space-y-6 border-t pt-6">
+                <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                    <div class="flex items-center justify-between gap-2 bg-white p-3 rounded-xl border border-blue-200">
+                        <a id="shortLink" href="#" target="_blank" class="text-blue-600 font-bold break-all text-sm dir-ltr"></a>
+                        <button onclick="copyToClipboard()" class="bg-blue-100 text-blue-800 px-3 py-1 rounded-lg text-xs font-bold">نسخ</button>
                     </div>
                 </div>
-
-                <div class="space-y-4">
-                    <label class="block text-slate-700 font-bold text-sm text-right">كود QR للرابط:</label>
-                    <div id="qrcode"></div>
-                    <button id="downloadBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
-                        <span>تحميل صورة QR</span>
-                    </button>
-                </div>
+                <div id="qrcode" class="flex justify-center"></div>
+                <button id="downloadBtn" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition-all shadow-md">تحميل QR</button>
             </div>
         </div>
 
-        <div id="redirect-screen" class="hidden py-16 text-center">
+        <div id="redirect-screen" class="hidden py-16">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 mx-auto"></div>
-            <p class="mt-8 text-slate-800 font-bold text-xl">جاري تحويلك بأمان...</p>
-            <p class="text-slate-500 mt-2 text-sm">بواسطة elgoharyx</p>
+            <p class="mt-8 text-slate-800 font-bold text-xl">جاري تحويلك الآن...</p>
         </div>
     </div>
 
@@ -82,96 +74,91 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // 1. منطق التوجيه (Redirect)
-        window.addEventListener('load', async () => {
-            const query = window.location.search;
-            if (query.startsWith('?')) {
-                const slug = query.substring(1).split('&')[0];
-                if (slug) {
-                    document.getElementById('main-content').classList.add('hidden');
-                    document.getElementById('redirect-screen').classList.remove('hidden');
-                    try {
-                        const snapshot = await get(child(ref(db), `links/${slug}`));
-                        if (snapshot.exists()) {
-                            window.location.replace(snapshot.val().target);
-                        } else {
-                            alert("الرابط غير موجود!");
-                            window.location.href = window.location.origin + window.location.pathname;
-                        }
-                    } catch (e) {
+        // --- إصلاح نظام التوجيه (Redirect) ---
+        window.addEventListener('DOMContentLoaded', async () => {
+            // نأخذ ما بعد علامة الاستفاهم بالضبط
+            const slug = window.location.search.substring(1).split('&')[0];
+            
+            if (slug) {
+                document.getElementById('main-content').classList.add('hidden');
+                document.getElementById('redirect-screen').classList.remove('hidden');
+                
+                try {
+                    const snapshot = await get(child(ref(db), `links/${decodeURIComponent(slug)}`));
+                    if (snapshot.exists()) {
+                        window.location.replace(snapshot.val().target);
+                    } else {
+                        alert("عذراً، الرابط غير موجود في قاعدة البيانات.");
                         window.location.href = window.location.origin + window.location.pathname;
                     }
+                } catch (e) {
+                    window.location.href = window.location.origin + window.location.pathname;
                 }
             }
         });
 
-        // 2. منطق الاختصار
+        // --- نظام الاختصار مع حل التكرار ---
         const shortenBtn = document.getElementById('shortenBtn');
-
         shortenBtn.addEventListener('click', async () => {
-            const originalUrl = document.getElementById('longUrl').value.trim();
+            const longUrl = document.getElementById('longUrl').value.trim();
             let customSlug = document.getElementById('customSlug').value.trim();
 
-            if (!originalUrl) return alert("يرجى إدخال رابط!");
+            if (!longUrl) return alert("يرجى إدخال الرابط أولاً");
 
             shortenBtn.disabled = true;
-            document.getElementById('btnText').innerText = "جاري الحفظ...";
             document.getElementById('btnLoader').classList.remove('hidden');
 
             try {
-                let finalSlug = customSlug || Math.random().toString(36).substring(2, 8);
+                let finalSlug = customSlug || Math.random().toString(36).substring(2, 7);
                 
-                // حل مشكلة التكرار تلقائياً بإضافة نقطة
+                // فحص التكرار بذكاء وإضافة نقطة تلقائياً إذا وجد الاسم
                 let isUnique = false;
                 while (!isUnique) {
                     const check = await get(child(ref(db), `links/${finalSlug}`));
                     if (check.exists()) {
-                        finalSlug += ".";
+                        finalSlug += "."; 
                     } else {
                         isUnique = true;
                     }
                 }
 
                 await set(ref(db, 'links/' + finalSlug), {
-                    target: originalUrl,
+                    target: longUrl,
                     createdAt: new Date().toISOString()
                 });
 
-                const finalLink = window.location.origin + window.location.pathname + "?" + finalSlug;
-                document.getElementById('shortLink').innerText = finalLink;
-                document.getElementById('shortLink').href = finalLink;
+                const shortUrl = window.location.origin + window.location.pathname + "?" + finalSlug;
+                document.getElementById('shortLink').innerText = shortUrl;
+                document.getElementById('shortLink').href = shortUrl;
                 document.getElementById('resultArea').classList.remove('hidden');
 
-                // إنشاء الـ QR (بدون شعار ليكون المسح أسرع)
-                const qrBox = document.getElementById("qrcode");
-                qrBox.innerHTML = "";
-                const qr = new QRCode(qrBox, {
-                    text: finalLink,
-                    width: 250,
-                    height: 250,
-                    colorDark : "#0f172a",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.M
+                // توليد QR الكود
+                const qrDiv = document.getElementById("qrcode");
+                qrDiv.innerHTML = "";
+                const qr = new QRCode(qrDiv, {
+                    text: shortUrl,
+                    width: 200,
+                    height: 200,
+                    correctLevel: QRCode.CorrectLevel.M
                 });
 
-                // تفعيل التحميل
+                // تفعيل زر التحميل
                 setTimeout(() => {
-                    const canvas = qrBox.querySelector('canvas');
+                    const canvas = qrDiv.querySelector('canvas');
                     if (canvas) {
                         document.getElementById('downloadBtn').onclick = () => {
-                            const a = document.createElement('a');
-                            a.href = canvas.toDataURL("image/png");
-                            a.download = `QR_${finalSlug}.png`;
-                            a.click();
+                            const link = document.createElement('a');
+                            link.download = `QR_${finalSlug}.png`;
+                            link.href = canvas.toDataURL();
+                            link.click();
                         };
                     }
-                }, 300);
+                }, 500);
 
             } catch (e) {
-                alert("خطأ في قاعدة البيانات!");
+                alert("حدث خطأ في الاتصال بقاعدة البيانات");
             } finally {
                 shortenBtn.disabled = false;
-                document.getElementById('btnText').innerText = "إنشاء الرابط و QR كود";
                 document.getElementById('btnLoader').classList.add('hidden');
             }
         });
@@ -180,7 +167,7 @@
     <script>
         function copyToClipboard() {
             const text = document.getElementById('shortLink').innerText;
-            navigator.clipboard.writeText(text).then(() => alert("تم النسخ!"));
+            navigator.clipboard.writeText(text).then(() => alert("تم نسخ الرابط!"));
         }
     </script>
 </body>
